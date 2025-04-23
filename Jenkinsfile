@@ -29,33 +29,17 @@ pipeline {
             }
         }
         
-        stage('Build') {
+        stage('Docker Build and Test') {
             steps {
                 dir("${WORKSPACE_DIR}") {
-                    sh 'make'
+                    script {
+                        // 构建 Docker 镜像
+                        sh 'docker build -t hello_world_jenkins .'
+                        
+                        // 运行 Docker 容器进行测试
+                        sh 'docker run --rm hello_world_jenkins'
+                    }
                 }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                dir("${WORKSPACE_DIR}") {
-                    sh 'make test'
-                }
-            }
-        }
-        
-        stage('Docker Build') {
-            steps {
-                dir("${WORKSPACE_DIR}") {
-                    sh 'docker build -t hello_world_jenkins .'
-                }
-            }
-        }
-        
-        stage('Docker Test') {
-            steps {
-                sh 'docker run --rm hello_world_jenkins'
             }
         }
     }
